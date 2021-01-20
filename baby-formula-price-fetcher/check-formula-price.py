@@ -40,7 +40,7 @@ def parse_text(text):
 
 def fetch_price():
     # curl
-    # 'https://www.costco.com/enfagrow-premium-non-gmo-toddler-next-step-formula-stage-3%2c-36.6-oz.product.100332452.html' \
+    # '***********' \
     # - H 'user-agent: Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Mobile Safari/537.36' \
     # - H 'accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'    url = "https://www.costco.com/enfagrow-premium-non-gmo-toddler-next-step-formula-stage-3%2c-36.6-oz.product.100332452.html"
 
