@@ -1,7 +1,27 @@
+# -*- coding: utf8 -*-
 import requests
+
 import logging
-import time
-import datetime
+from email.mime.text import MIMEText
+from email.header import Header
+import smtplib
+
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
+# Third-party SMTP service for sending alert emails. 第三方 SMTP 服务，用于发送告警邮件
+mail_host = "smtp.qq.com"       # SMTP server, such as QQ mailbox, need to open SMTP service in the account. SMTP服务器,如QQ邮箱，需要在账户里开启SMTP服务
+mail_user = "*********@qq.com"  # Username 用户名
+mail_pass = ""*********"  # Password, SMTP service password. 口令，SMTP服务密码
+mail_port = 465  # SMTP service port. SMTP服务端口
+
+# The notification list of alert emails. 告警邮件通知列表
+email_notify_list = {
+    "chrishouwakot@gmail.com"
+}
+
+def init():
+    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', filename='activity.log', level=logging.INFO)
 
 
 # send alert when the price of formula is less than 24.99
@@ -44,23 +64,42 @@ def fetch_price():
             logging.error(exp);
             return None;
 
+def sendEmail(fromAddr, toAddr, subject, content):
+    sender = fromAddr
+    receivers = [toAddr]
+    message = MIMEText(content, 'plain', 'utf-8')
+    message['From'] = Header(fromAddr, 'utf-8')
+    message['To'] = Header(toAddr, 'utf-8')
+    message['Subject'] = Header(subject, 'utf-8')
+    try:
+        smtpObj = smtplib.SMTP_SSL(mail_host, mail_port)
+        smtpObj.login(mail_user, mail_pass)
+        smtpObj.sendmail(sender, receivers, message.as_string())
+        print("send email success")
+        return True
+    except smtplib.SMTPException as e:
+        print(e)
+        print("Error: send email fail")
+        return False
 
-def init():
-    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', filename='activity.log', level=logging.INFO)
+
+def check_price():
+    price = fetch_price()
+
+    if (price == None):
+        price = "unable to find price";
+
+    msg = "Current Formula Price is {}".format(price)
+
+    logging.info(msg)
+
+    for toAddr in email_notify_list:
+        sendEmail(mail_user, toAddr, msg, msg)
+
+
+def main_handler(event, context):
+    check_price()
 
 
 if __name__ == '__main__':
-
-    init()
-    start_time = time.time()
-
-    price = fetch_price()
-    if (price == None):
-        logging.error("unable to find price");
-    else:
-        print(price)
-        if price < 21:
-            print("buy")
-        logging.info("price is {} at {} ".format(price, datetime.date.today()))
-
-    print("run time %s seconds"  %  (time.time() - start_time));
+    main_handler("", "")
