@@ -10,16 +10,17 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 # Third-party SMTP service for sending alert emails. 第三方 SMTP 服务，用于发送告警邮件
-mail_host = "smtp.qq.com"       # SMTP server, such as QQ mailbox, need to open SMTP service in the account. SMTP服务器,如QQ邮箱，需要在账户里开启SMTP服务
-mail_user = "*********@qq.com"  # Username 用户名
-mail_pass = ""*********"  # Password, SMTP service password. 口令，SMTP服务密码
+mail_host = "***********"       # SMTP server, such as QQ mailbox, need to open SMTP service in the account. SMTP服务器,如QQ邮箱，需要在账户里开启SMTP服务
+mail_user = "***********"  # Username 用户名
+mail_pass = "***********"  # Password, SMTP service password. 口令，SMTP服务密码
 mail_port = 465  # SMTP service port. SMTP服务端口
 
 # The notification list of alert emails. 告警邮件通知列表
 email_notify_list = {
-    "chrishouwakot@gmail.com"
+    "***********",
+    "***********"
 }
-
+url = '***********'
 def init():
     logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', filename='activity.log', level=logging.INFO)
 
@@ -43,7 +44,6 @@ def fetch_price():
     # - H 'user-agent: Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Mobile Safari/537.36' \
     # - H 'accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'    url = "https://www.costco.com/enfagrow-premium-non-gmo-toddler-next-step-formula-stage-3%2c-36.6-oz.product.100332452.html"
 
-    url = 'https://www.costco.com/enfagrow-premium-non-gmo-toddler-next-step-formula-stage-3%2c-36.6-oz.product.100332452.html'
 
     headers = {
 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'",
@@ -94,12 +94,17 @@ def check_price():
     logging.info(msg)
 
     for toAddr in email_notify_list:
-        sendEmail(mail_user, toAddr, msg, msg)
+        sendEmail(mail_user, toAddr, msg, url)
 
 
 def main_handler(event, context):
     check_price()
-
+    return {
+        "isBase64Encoded": False,
+        "statusCode": 200,
+        "headers": {"Content-Type": "text/plain;charset=UTF-8"},  # this content type is very important
+        "body": "success"
+    }
 
 if __name__ == '__main__':
     main_handler("", "")
